@@ -1,4 +1,3 @@
-// middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 
 const isAuthenticated = (req, res, next) => {
@@ -17,4 +16,4 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
-module.exports = isAuthenticated; // ✅ default export with proper name
+module.exports = isAuthenticated;
