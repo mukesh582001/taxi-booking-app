@@ -1,4 +1,4 @@
-// middleware/authMiddleware.js
+// middleware/authMiddleware.js/oretu
 const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
