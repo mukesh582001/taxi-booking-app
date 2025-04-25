@@ -17,4 +17,4 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
-module.exports = isAuthenticated;
+module.exports = isAuthenticated; // ✅ default export with proper name
