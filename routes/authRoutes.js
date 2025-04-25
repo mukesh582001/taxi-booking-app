@@ -1,14 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const authController = require("../controllers/authController");
-const protect = require("../middleware/authMiddleware");  // ✅ FIXED
+// middleware/authMiddleware.js
+const jwt = require("jsonwebtoken");
 
-// Public Routes
-router.post("/register", authController.register);
-router.post("/login", authController.login);
+const protect = (req, res, next) => {
+  const token = req.header("Authorization");
 
-// Protected Routes
-router.get("/profile", protect, authController.getProfile);
-router.put("/profile", protect, authController.updateProfile);
+  if (!token) {
+    return res.status(401).json({ message: "Access Denied: No token provided" });
+  }
 
-module.exports = router;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).json({ message: "Invalid Token" });
+  }
+};
+
+module.exports = protect;
