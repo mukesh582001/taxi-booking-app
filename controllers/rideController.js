@@ -3,7 +3,7 @@ const Ride = require("../models/rideModel");
 // POST /api/rides
 const createRide = async (req, res) => {
   try {
-    console.log("📥 Data Received:", req.body); // 👈 ADD THIS LINE
+    console.log("📥 Data Received:", req.body);
 
     const { pickup, drop } = req.body;
     if (!pickup || !drop) {
@@ -13,20 +13,20 @@ const createRide = async (req, res) => {
     const newRide = await Ride.create({ pickup, drop });
     res.status(201).json(newRide);
   } catch (err) {
-    console.error("❌ Error in createRide:", err.message); // 👈 ALSO ADD THIS
+    console.error("❌ Error in createRide:", err.message);
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
 
-// Get all rides (with filtering based on status)
-exports.getRides = async (req, res) => {
+// GET /api/rides with optional status filter
+const getRides = async (req, res) => {
   try {
-    const { status } = req.query;  // Fetch the status from the query parameters
+    const { status } = req.query;
     let rides;
     if (status) {
-      rides = await Ride.find({ status }); // If a status is provided, filter by status
+      rides = await Ride.find({ status });
     } else {
-      rides = await Ride.find(); // Otherwise, fetch all rides
+      rides = await Ride.find();
     }
     res.status(200).json(rides);
   } catch (error) {
@@ -34,23 +34,7 @@ exports.getRides = async (req, res) => {
   }
 };
 
-exports.updateRide = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { pickup, drop, status } = req.body;
-    const updatedRide = await Ride.findByIdAndUpdate(
-      id,
-      { pickup, drop, status },
-      { new: true }
-    );
-    res.status(200).json(updatedRide);
-  } catch (error) {
-    res.status(500).json({ message: "Error updating ride", error });
-  }
-};
-
-
-// GET /api/rides
+// GET /api/rides (unfiltered)
 const getAllRides = async (req, res) => {
   try {
     const rides = await Ride.find().sort({ createdAt: -1 });
@@ -60,4 +44,27 @@ const getAllRides = async (req, res) => {
   }
 };
 
-module.exports = { createRide, getAllRides };
+// PUT /api/rides/:id (update pickup, drop, status)
+const updateRide = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { pickup, drop, status } = req.body;
+
+    const updatedRide = await Ride.findByIdAndUpdate(
+      id,
+      { pickup, drop, status },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Ride updated", updatedRide });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating ride", error });
+  }
+};
+
+module.exports = {
+  createRide,
+  getAllRides,
+  getRides,
+  updateRide, // ✅ Don't forget to export this!
+};

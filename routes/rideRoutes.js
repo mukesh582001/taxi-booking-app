@@ -1,16 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const { createRide, getAllRides } = require("../controllers/rideController");
+const {
+  createRide,
+  getAllRides,
+  getRides,
+  updateRide
+} = require("../controllers/rideController");
 const Ride = require("../models/rideModel");
 
-// Create ride
+// Create a new ride
 router.post("/", createRide);
 
-// Get all rides
-router.get("/", getAllRides);
+// Get all rides (with optional status filter)
+router.get("/", getRides);
 
+// Update ride completely (pickup, drop, status)
 router.put("/:id", updateRide);
-// Delete ride
+
+// Delete ride by ID
 router.delete("/:id", async (req, res) => {
   try {
     const deleted = await Ride.findByIdAndDelete(req.params.id);
@@ -20,7 +27,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Update ride status
+// Update only ride status
 router.put("/:id/status", async (req, res) => {
   try {
     const { status } = req.body;
